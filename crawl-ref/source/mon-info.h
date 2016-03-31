@@ -260,7 +260,8 @@ struct monster_info : public monster_info_base
 #define MILEV_SKIP_SAFE -1
 #define MILEV_NAME -2
     monster_info() { client_id = 0; }
-    explicit monster_info(const monster* m, int level = MILEV_ALL);
+    explicit monster_info(const monster* m, int level = MILEV_ALL,
+                          bool force_real = false);
     explicit monster_info(monster_type p_type,
                           monster_type p_base_type = MONS_NO_MONSTER);
 
@@ -420,3 +421,7 @@ void mons_conditions_string(string& desc, const vector<monster_info>& mi,
                             int start, int count, bool equipment);
 
 typedef function<vector<string> (const monster_info& mi)> (desc_filter);
+
+#ifdef CHAOS_CRAWL
+monster_type map_mon_type(monster_type type);
+#endif
