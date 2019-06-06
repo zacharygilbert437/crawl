@@ -17,3 +17,7 @@ private:
     bool prev;
 };
 #endif
+
+// This is implemented this way, as opposed to a #define, so that switching
+// between a headless build and regular console requires only swapping .o files.
+bool in_headless_mode();

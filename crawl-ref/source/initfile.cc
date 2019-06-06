@@ -4031,6 +4031,23 @@ enum commandline_option_type
     CLO_NOPS
 };
 
+static set<commandline_option_type> clo_headless_ok = {
+    CLO_SCORES,
+    CLO_DUMP_MAPS,
+    CLO_TEST,
+    CLO_SCRIPT,
+    CLO_BUILDDB,
+    CLO_HELP,
+    CLO_VERSION,
+    CLO_PLAYABLE_JSON, // JSON metadata for species, jobs, combos.
+    CLO_EDIT_BONES,
+#ifdef USE_TILE_WEB
+    CLO_WEBTILES_SOCKET,
+    CLO_AWAIT_CONNECTION,
+    CLO_PRINT_WEBTILES_OPTIONS,
+#endif
+};
+
 static const char *cmd_ops[] =
 {
     "scores", "name", "species", "background", "dir", "rc", "rcdir", "tscores",
@@ -4796,7 +4813,12 @@ bool parse_args(int argc, char **argv, bool rc_only)
     SysEnv.map_gen_iters = 0;
 
     if (argc < 2)           // no args!
-        return true;
+        return
+#ifdef USE_TILE_LOCAL
+            true;
+#else
+            !in_headless_mode();
+#endif
 
     char *arg, *next_arg;
     int current = 1;
@@ -4812,6 +4834,8 @@ bool parse_args(int argc, char **argv, bool rc_only)
         for (int i = 1; i < argc; ++i)
             SysEnv.cmd_args.emplace_back(argv[i]);
     }
+
+    bool seen_headless_ok = false;
 
     while (current < argc)
     {
@@ -4830,6 +4854,21 @@ bool parse_args(int argc, char **argv, bool rc_only)
         char c = arg[0];
         if (c != '-')
         {
+#ifndef USE_TILE_LOCAL
+            if (in_headless_mode())
+            {
+                crawl_state.test   = true;
+                crawl_state.script = true;
+                crawl_state.script_args.clear();
+                crawl_state.tests_selected = split_string(",", arg);
+                if (current < argc - 1)
+                {
+                    for (int extra = current + 1; extra < argc; ++extra)
+                        crawl_state.script_args.emplace_back(argv[extra]);
+                }
+                return true;
+            }
+#endif
             fprintf(stderr,
                     "Option '%s' is invalid; options must be prefixed "
                     "with -\n\n", arg);
@@ -4882,6 +4921,9 @@ bool parse_args(int argc, char **argv, bool rc_only)
         {
             next_is_param = true;
         }
+
+        if (clo_headless_ok.count(static_cast<commandline_option_type>(o)) > 0)
+            seen_headless_ok = true;
 
         // Take action according to the cmd chosen.
         switch (o)
@@ -5304,8 +5346,11 @@ bool parse_args(int argc, char **argv, bool rc_only)
         if (nextUsed)
             current++;
     }
-
-    return true;
+    return
+#ifndef USE_TILE_LOCAL
+        in_headless_mode() ? seen_headless_ok :
+#endif
+        true;
 }
 
 ///////////////////////////////////////////////////////////////////////

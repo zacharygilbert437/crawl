@@ -487,6 +487,14 @@ static void _show_commandline_options_help()
     string help;
 # define puts(x) (help += x, help += '\n')
 #endif
+#ifndef USE_TILE_LOCAL
+    if (in_headless_mode())
+    {
+        puts("Headless crawl: requires -test, -script, -builddb, or other similar parameter.");
+        puts("A single argument will be interpreted as a script name.");
+        puts("");
+    }
+#endif
 
     puts("Command line options:");
     puts("  -help                 prints this list of options");

@@ -60,6 +60,9 @@ static struct termios game_term;
     #include CURSES_INCLUDE_FILE
 #endif
 
+// not constexpr because it is resolved at link time
+bool in_headless_mode() { return false; }
+
 // Globals holding current text/backg. colours
 // Note that these are internal colours, *not* curses colors.
 /** @brief The current foreground @em colour. */

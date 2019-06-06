@@ -593,6 +593,7 @@ libw32c.o \
 libunix.o \
 catch2-tests/test_plug_and_play.o \
 catch2-tests/test_main.o \
+libheadless.o \
 main.o \
 util/monster/monster-main.o \
 version.o
