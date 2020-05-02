@@ -10,7 +10,11 @@
 #include "libunix.h"
 
 #include <unistd.h>
+#ifdef UNIX
+#   include <csignal>
+#endif
 
+#include "libutil.h"
 #include "cio.h"
 #include "state.h"
 #include "tiles-build-specific.h"
@@ -106,6 +110,13 @@ int getch_ck()
 
 void console_startup()
 {
+    // override the default behavior for SIGINT set in libutil.cc:init_signals.
+    // TODO: windows ctrl-c? should be able to add a handler on top of
+    // libutil.cc:console_handler
+#if defined(USE_UNIX_SIGNALS) && defined(SIGINT)
+    signal(SIGINT, handle_hangup);
+#endif
+
 #ifdef USE_TILE_WEB
     tiles.resize();
 #endif
