@@ -26,7 +26,7 @@ static bool cursor_is_enabled = true;
 
 void set_mouse_enabled(bool enabled)
 {
-
+    UNUSED(enabled);
 }
 
 static int pending = 0;
@@ -61,7 +61,7 @@ int getchk()
 
 void set_getch_returns_resizes(bool rr)
 {
-
+    UNUSED(rr);
 }
 
 int m_getch()
@@ -118,7 +118,7 @@ void console_shutdown()
 
 void cprintf(const char *format, ...)
 {
-
+    UNUSED(format);
 }
 
 void putwch(char32_t chr)
@@ -129,12 +129,16 @@ void putwch(char32_t chr)
     buf[0] = chr;
     buf[1] = 0;
     tiles.put_ucs_string(buf);
+#else
+    UNUSED(chr);
 #endif
 }
 
 void puttext(int x1, int y1, const crawl_view_buffer &vbuf)
 {
-
+    UNUSED(x1);
+    UNUSED(y1);
+    UNUSED(vbuf);
 }
 
 // These next four are front functions so that we can reduce
@@ -206,6 +210,8 @@ void textcolour(int col)
 {
 #ifdef USE_TILE_WEB
     tiles.textcolour(col);
+#else
+    UNUSED(col);
 #endif
 }
 
@@ -213,17 +219,21 @@ void textbackground(int col)
 {
 #ifdef USE_TILE_WEB
     tiles.textbackground(col);
+#else
+    UNUSED(col);
 #endif
 }
 
 void gotoxy_sys(int x, int y)
 {
-
+    UNUSED(x);
+    UNUSED(y);
 }
 
 void fakecursorxy(int x, int y)
 {
-
+    UNUSED(x);
+    UNUSED(y);
 }
 
 int wherex()
