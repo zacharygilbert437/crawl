@@ -187,7 +187,7 @@ int num_to_lines(int num)
     return num;
 }
 
-void clrscr()
+void clrscr_sys()
 {
 #ifdef USE_TILE_WEB
     tiles.clrscr();
@@ -235,26 +235,28 @@ void textbackground(int col)
 #endif
 }
 
+static int headless_x = 1;
+static int headless_y = 1;
+
 void gotoxy_sys(int x, int y)
 {
-    UNUSED(x);
-    UNUSED(y);
+    headless_x = x;
+    headless_y = y;
 }
 
 void fakecursorxy(int x, int y)
 {
-    UNUSED(x);
-    UNUSED(y);
+    gotoxy_sys(x, y);
 }
 
 int wherex()
 {
-    return 1; // TODO: ???
+    return headless_x;
 }
 
 int wherey()
 {
-    return 1; // TODO: ???
+    return headless_y;
 }
 
 void delay(unsigned int time)
