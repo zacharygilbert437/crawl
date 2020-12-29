@@ -599,7 +599,7 @@ wand of cold
 
 一件发射寒冰矢的魔法道具。
 %%%%
-wand of disintegration
+wand of mindburst
 
 这件魔法道具能使几乎一切物质分解——就连坚硬的雕像都不例外，至于解离血肉之躯，
 那更是不在话下。

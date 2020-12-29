@@ -687,7 +687,7 @@ wand of cold
 
 Ein magisches Gerät welches großartige Bolzen aus Kälte wirft.
 %%%%
-wand of disintegration
+wand of mindburst
 
 Ein magisches Gerät, das die physische Struktur von irgendetwas außer den
 härtesten Wänden — sogar starre Bildsäulen ganz zu schweigen vom Fleisch stört.

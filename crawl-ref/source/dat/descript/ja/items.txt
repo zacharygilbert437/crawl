@@ -631,7 +631,7 @@ wand of digging
 
 強化を受けていない岩を掘削する魔法の道具だ。
 %%%%
-wand of disintegration
+wand of mindburst
 
 硬質の壁を除いてあらゆる物質構造を崩壊させる魔法の道具だ。
 肉体は言うまでもなく固定された石像でさえ崩壊する。

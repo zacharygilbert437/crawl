@@ -668,7 +668,7 @@ wand of digging
 
 Magiczny przedmiot który potrafi rozpuścić nie wzmocnioną skałę, tworząc tunel.
 %%%%
-wand of disintegration
+wand of mindburst
 
 Magiczny przedmiot który potrafi rozbić strukturę przedmiotów na kawałki.
 Działa zarówno na istoty (żywe czy martwe), jak i na statuy, ściany, itp.

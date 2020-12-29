@@ -935,7 +935,7 @@ wand of digging
 
 Un instrument magique qui creuse des tunnels a travers la roche brute.
 %%%%
-wand of disintegration
+wand of mindburst
 
 Un instrument magique qui désagrège la structure physique de n'importe quoi, à
 l’exception notable des murs les plus durs – cela inclue les statues rigides,
