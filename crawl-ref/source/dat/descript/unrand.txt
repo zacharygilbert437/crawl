@@ -471,10 +471,9 @@ ring of Phasing
 An unadorned jade ring. Its wearer may momentarily phase out of reality in order
 to evade attacks.
 %%%%
-ring of Robustness
+ring of Invincibility
 
-A plain steel ring that causes its wearer to become substantially more
-resilient.
+A plain steel ring. Its wearer is exceptionally difficult to harm.
 %%%%
 ring of the Mage
 

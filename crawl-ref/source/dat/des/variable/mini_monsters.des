@@ -6523,15 +6523,15 @@ ENDMAP
 #          the second time), OOD monsters that can be easily
 #          escaped, and not using overpowered/useless unrandarts.
 ################################################################
-# Robustness
+# Invincibility
 #
-NAME:   minmay_guarded_unrand_robustness
+NAME:   minmay_guarded_unrand_invincibility
 DEPTH:  D:$, Depths, Vaults
 TAGS:   no_monster_gen no_item_gen transparent
 WEIGHT: 3, 1 (Vaults)
 MONS:   patrolling iron troll
 KMONS:  d = patrolling iron dragon
-KITEM:  d = ring_of_robustness no_pickup
+KITEM:  d = ring_of_invincibility no_pickup
 MAP
 ...............
 .vvvvv.@.vvvvv.
