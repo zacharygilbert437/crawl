@@ -714,7 +714,11 @@ monster_info::monster_info(const monster* m, int milev)
         else
             ok = true;
         if (ok)
+        {
             inv[i].reset(new item_def(get_item_info(env.item[m->inv[i]])));
+            if (i == MSLOT_MISSILE)
+                inv[i]->quantity = 1;
+        }
     }
 
     fire_blocker = DNGN_UNSEEN;
