@@ -1,0 +1,51 @@
+default-depth: Arena
+
+{{
+function arena_duel_victory(data, triggerable, triggerer, marker, ev)
+    local mons = dgn.mons_from_mid(ev:arg1())
+    if not mons.has_prop("okawaru_duel_current") then
+        return
+    end
+
+    local x, y = marker:pos()
+    dgn.tile_feat_changed(x, y, nil)
+    dgn.terrain_changed(x, y, "floor", false)
+    crawl.mpr("Okawaru crowns you victorious!", "god")
+    crawl.mpr("An exit appears.")
+end
+}}
+
+NAME:   okawaru_arena
+TAGS:   no_dump no_monster_gen allow_dup
+ORIENT: encompass
+KFEAT:  < = exit_arena
+KPROP:  1'< = no_tele_into
+{{
+local duel_target_marker = TriggerableFunction:new {
+    func = "arena_duel_victory",
+    repeated = false
+}
+
+duel_target_marker:add_triggerer(DgnTriggerer:new {
+    type = "monster_dies",
+    target = "any"
+})
+
+lua_marker("B", duel_target_marker)
+}}
+SUBST:  B = o
+MONS:   generate_awake human name:spectator n_rpl n_des
+MAP
+XXXXXXXXXXXXX
+XvvvvvvvvvvvX
+Xv1'1'1'1'1vX
+Xv'ooooooo'vX
+Xv1o.....o1vX
+Xv'o.....o'vX
+Xv1o..A..o1vX
+Xv'o.....o'vX
+Xv1o.....o1vX
+Xv'oooBooo'vX
+Xv1'1o<o1'1vX
+XvvvvvvvvvvvX
+XXXXXXXXXXXXX
