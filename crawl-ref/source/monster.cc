@@ -2330,13 +2330,10 @@ string monster::full_name(description_level_type desc) const
 
 string monster::pronoun(pronoun_type pro, bool force_visible) const
 {
-    const bool seen = force_visible || you.can_see(*this);
-    if (seen && props.exists(MON_GENDER_KEY))
-    {
-        return decline_pronoun((gender_type)props[MON_GENDER_KEY].get_int(),
-                               pro);
-    }
-    return mons_pronoun(type, pro, seen);
+    if (!force_visible && !you.can_see(*this))
+        return decline_pronoun(GENDER_NEUTRAL, pro);
+    monster_info mi(this, MILEV_NAME);
+    return mi.pronoun(pro);
 }
 
 bool monster::pronoun_plurality(bool force_visible) const

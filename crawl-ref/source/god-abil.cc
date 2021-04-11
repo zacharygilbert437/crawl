@@ -1709,9 +1709,8 @@ void yred_make_enslaved_soul(monster* mon, bool force_hostile)
     add_daction(DACT_OLD_CHARMD_SOULS_POOF);
     remove_enslaved_soul_companion();
 
-    monster_info mi(mon, MILEV_NAME);
-    const string whose = you.can_see(*mon) ? apostrophise(mi.common_name(DESC_THE))
-                                           : mi.pronoun(PRONOUN_POSSESSIVE);
+    const string whose = you.can_see(*mon) ? apostrophise(mon->name(DESC_THE))
+                                           : mon->pronoun(PRONOUN_POSSESSIVE);
 
     // Remove the monster's soul-enslaving enchantment, as it's no
     // longer needed.
@@ -4977,8 +4976,7 @@ static int _apply_apocalypse(coord_def where)
         case 0:
             if (mons->antimagic_susceptible())
             {
-                monster_info mi(mons, MILEV_NAME);
-                message = " doubts " + string(mi.pronoun(PRONOUN_POSSESSIVE))
+                message = " doubts " + mons->pronoun(PRONOUN_POSSESSIVE)
                           + " magic when faced with ultimate truth!";
                 enchantment = ENCH_ANTIMAGIC;
                 duration = 500 + random2(200);

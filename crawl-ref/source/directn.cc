@@ -3908,7 +3908,7 @@ static void _describe_cell(const coord_def& where, bool in_range)
         if (!in_range)
         {
             mprf(MSGCH_EXAMINE_FILTER, "%s %s out of range.",
-                 mi.pronoun(PRONOUN_SUBJECTIVE),
+                 mon->pronoun(PRONOUN_SUBJECTIVE).c_str(),
                  conjugate_verb("are", mi.pronoun_plurality()).c_str());
         }
 #ifndef DEBUG_DIAGNOSTICS

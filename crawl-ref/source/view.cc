@@ -330,27 +330,27 @@ static string _monster_headsup(const vector<monster*> &monsters,
 
         string monname;
         if (monsters.size() == 1)
-            monname = mi.pronoun(PRONOUN_SUBJECTIVE);
-        else if (mi.type == MONS_DANCING_WEAPON)
+            monname = mon->pronoun(PRONOUN_SUBJECTIVE);
+        else if (mon->type == MONS_DANCING_WEAPON)
             monname = "There";
         else if (types.at(mon->type) == 1)
-            monname = mi.full_name(DESC_THE);
+            monname = mon->full_name(DESC_THE);
         else
-            monname = mi.full_name(DESC_A);
+            monname = mon->full_name(DESC_A);
         warning_msg += uppercase_first(monname);
 
         warning_msg += " ";
         if (monsters.size() == 1)
-            warning_msg += conjugate_verb("are", mi.pronoun_plurality());
+            warning_msg += conjugate_verb("are", mon->pronoun_plurality());
         else
             warning_msg += "is";
 
-        mons_equip_desc_level_type level = mi.type != MONS_DANCING_WEAPON
+        mons_equip_desc_level_type level = mon->type != MONS_DANCING_WEAPON
             ? DESC_IDENTIFIED : DESC_WEAPON_WARNING;
 
         if (!divine)
         {
-            if (mi.type != MONS_DANCING_WEAPON)
+            if (mon->type != MONS_DANCING_WEAPON)
                 warning_msg += " ";
             warning_msg += get_monster_equipment_desc(mi, level, DESC_NONE);
             warning_msg += ".";
@@ -367,7 +367,7 @@ static string _monster_headsup(const vector<monster*> &monsters,
         else
         {
             // TODO: deduplicate
-            if (mi.type != MONS_DANCING_WEAPON)
+            if (mon->type != MONS_DANCING_WEAPON)
                 warning_msg += " ";
             warning_msg += get_monster_equipment_desc(mi, level, DESC_NONE);
         }

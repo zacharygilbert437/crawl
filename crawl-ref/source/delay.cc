@@ -904,7 +904,6 @@ static string _abyss_monster_creation_message(const monster* mon)
                           : " pops from nullspace!";
     }
 
-    monster_info mi(mon, MILEV_NAME);
     // You may ask: "Why these weights?" So would I!
     const vector<pair<string, int>> messages = {
         { " appears in a shower of translocational energy.", 17 },
@@ -913,7 +912,7 @@ static string _abyss_monster_creation_message(const monster* mon)
         { " emerges from chaos.", 13 },
         { " emerges from the beyond.", 26 },
         { make_stringf(" assembles %s!",
-                       mi.pronoun(PRONOUN_REFLEXIVE)), 33 },
+                       mon->pronoun(PRONOUN_REFLEXIVE).c_str()), 33 },
         { " erupts from nowhere.", 9 },
         { " bursts from nowhere.", 18 },
         { " is cast out of space.", 7 },
@@ -1020,8 +1019,6 @@ static inline bool _monster_warning(activity_interrupt ai,
         else
             text += " comes into view.";
 
-        monster_info mi(mon);
-
         bool zin_id = false;
         string god_warning;
 
@@ -1034,21 +1031,23 @@ static inline bool _monster_warning(activity_interrupt ai,
             discover_shifter(*mon);
             god_warning = uppercase_first(god_name(you.religion))
                           + " warns you: "
-                          + uppercase_first(mi.pronoun(PRONOUN_SUBJECTIVE))
+                          + uppercase_first(mon->pronoun(PRONOUN_SUBJECTIVE))
                           + " "
-                          + conjugate_verb("are", mi.pronoun_plurality())
+                          + conjugate_verb("are", mon->pronoun_plurality())
                           + " a foul ";
             if (mon->has_ench(ENCH_GLOWING_SHAPESHIFTER))
                 god_warning += "glowing ";
             god_warning += "shapeshifter.";
         }
 
+        monster_info mi(mon);
+
         const string mweap = get_monster_equipment_desc(mi, DESC_IDENTIFIED,
                                                         DESC_NONE);
 
         if (!mweap.empty())
         {
-            text += " " + uppercase_first(mi.pronoun(PRONOUN_SUBJECTIVE))
+            text += " " + uppercase_first(mon->pronoun(PRONOUN_SUBJECTIVE))
                 + " " + conjugate_verb("are", mi.pronoun_plurality())
                 + (mweap[0] != ' ' ? " " : "")
                 + mweap + ".";

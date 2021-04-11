@@ -646,13 +646,12 @@ static void _hydra_consider_devouring(monster &defender)
     // shapeshifters are mutagenic
     if (defender.is_shapeshifter())
     {
-        monster_info mi(&defender, MILEV_NAME);
         // handle this carefully, so the player knows what's going on
         mprf("You spit out %s as %s %s & %s in your mouth!",
-             mi.common_name(DESC_THE).c_str(),
-             mi.pronoun(PRONOUN_SUBJECTIVE),
-             conjugate_verb("twist", mi.pronoun_plurality()).c_str(),
-             conjugate_verb("change", mi.pronoun_plurality()).c_str());
+             defender.name(DESC_THE).c_str(),
+             defender.pronoun(PRONOUN_SUBJECTIVE).c_str(),
+             conjugate_verb("twist", defender.pronoun_plurality()).c_str(),
+             conjugate_verb("change", defender.pronoun_plurality()).c_str());
         return;
     }
 
@@ -1376,10 +1375,9 @@ bool melee_attack::player_aux_apply(unarmed_attack_type atk)
                 // MP drain suppressed under Pakellas, but antimagic still applies.
                 if (!have_passive(passive_t::no_mp_regen) || spell_user)
                 {
-                    monster_info mi(defender->as_monster(), MILEV_NAME);
                     mprf("You %s %s %s.",
                          have_passive(passive_t::no_mp_regen) ? "disrupt" : "drain",
-                         mi.pronoun(PRONOUN_POSSESSIVE),
+                         defender->as_monster()->pronoun(PRONOUN_POSSESSIVE).c_str(),
                          spell_user ? "magic" : "power");
                 }
 
@@ -2556,14 +2554,6 @@ bool melee_attack::mons_attack_effects()
     return true;
 }
 
-static string _get_pronoun(actor *act, pronoun_type variant)
-{
-    if (act->is_player())
-        return act->pronoun(variant);
-    monster_info mi(act->as_monster(), MILEV_NAME);
-    return mi.pronoun(variant);
-}
-
 void melee_attack::mons_apply_attack_flavour()
 {
     // Most of this is from BWR 4.1.2.
@@ -2848,7 +2838,7 @@ void melee_attack::mons_apply_attack_flavour()
             {
                 mprf("%s drains %s %s.",
                      attacker->name(DESC_THE).c_str(),
-                     _get_pronoun(defender, PRONOUN_POSSESSIVE).c_str(),
+                     defender->pronoun(PRONOUN_POSSESSIVE).c_str(),
                      spell_user ? "magic" : "power");
             }
 
@@ -3317,7 +3307,7 @@ bool melee_attack::do_knockback(bool trample)
                 mprf("%s %s %s ground!",
                      defender_name(false).c_str(),
                      defender->conj_verb("hold").c_str(),
-                     _get_pronoun(defender, PRONOUN_POSSESSIVE).c_str());
+                     defender->pronoun(PRONOUN_POSSESSIVE).c_str());
             }
         }
 
@@ -3599,17 +3589,16 @@ bool melee_attack::_player_vampire_draws_blood(const monster* mon, const int dam
     }
 
     // Now print message, need biting unless already done (never for bat form!)
-    monster_info mi(mon, MILEV_NAME);
     if (needs_bite_msg && you.form != transformation::bat)
     {
         mprf("You bite %s, and draw %s blood!",
-             mi.common_name(DESC_THE).c_str(),
-             mi.pronoun(PRONOUN_POSSESSIVE));
+             mon->name(DESC_THE, true).c_str(),
+             mon->pronoun(PRONOUN_POSSESSIVE).c_str());
     }
     else
     {
         mprf("You draw %s blood!",
-             apostrophise(mi.common_name(DESC_THE)).c_str());
+             apostrophise(mon->name(DESC_THE, true)).c_str());
     }
 
     // Regain hp.
