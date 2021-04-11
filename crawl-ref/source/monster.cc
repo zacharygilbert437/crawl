@@ -2338,11 +2338,10 @@ string monster::pronoun(pronoun_type pro, bool force_visible) const
 
 bool monster::pronoun_plurality(bool force_visible) const
 {
-    const bool seen = force_visible || you.can_see(*this);
-    if (seen && props.exists(MON_GENDER_KEY))
-        return props[MON_GENDER_KEY].get_int() == GENDER_NEUTRAL;
-
-    return seen && mons_class_gender(type) == GENDER_NEUTRAL;
+    if (!force_visible && !you.can_see(*this))
+        return false;
+    monster_info mi(this, MILEV_NAME);
+    return mi.pronoun_plurality();
 }
 
 string monster::conj_verb(const string &verb) const
