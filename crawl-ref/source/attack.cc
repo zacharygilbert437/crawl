@@ -356,7 +356,10 @@ string attack::actor_name(const actor *a, description_level_type desc,
 string attack::actor_pronoun(const actor *a, pronoun_type pron,
                              bool actor_visible)
 {
-    return actor_visible ? a->pronoun(pron) : anon_pronoun(pron);
+    if (a->is_player())
+        return a->pronoun(pron);
+    monster_info mi(defender->as_monster(), MILEV_NAME);
+    return mi.pronoun(pron);
 }
 
 /* Returns an anonymous actor's name

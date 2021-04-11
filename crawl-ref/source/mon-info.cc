@@ -213,7 +213,9 @@ static bool _is_public_key(string key)
      || key == MUTANT_BEAST_FACETS
      || key == MUTANT_BEAST_TIER
      || key == DOOM_HOUND_HOWLED_KEY
+#ifndef CHAOS_CRAWL
      || key == MON_GENDER_KEY
+#endif
      || key == SEEN_SPELLS_KEY
      || key == KNOWN_MAX_HP_KEY
      || key == VAULT_HD_KEY
@@ -528,7 +530,7 @@ monster_info::monster_info(const monster* m, int milev, bool force_real)
     else
 #endif
         type = m->type;
-    
+
     threat = milev <= MILEV_NAME ? MTHRT_TRIVIAL : mons_threat_level(*m);
 
     props.clear();
@@ -570,7 +572,7 @@ monster_info::monster_info(const monster* m, int milev, bool force_real)
 #ifdef CHAOS_CRAWL
     }
 #endif
-    
+
     if (base_type == MONS_NO_MONSTER)
         base_type = type;
 
