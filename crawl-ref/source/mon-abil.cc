@@ -27,6 +27,7 @@
 #include "english.h"
 #include "env.h"
 #include "fprop.h"
+#include "god-abil.h"
 #include "item-prop.h"
 #include "libutil.h"
 #include "losglobal.h"
@@ -474,10 +475,12 @@ static monster *_slime_split(monster* thing, bool force_split)
 // See if a given slime creature can split or merge.
 static bool _slime_split_merge(monster* thing)
 {
-    // No merging/splitting shapeshifters.
+    // No merging/splitting shapeshifters or duelled targets (due to general
+    // messiness).
     if (!thing
         || thing->is_shapeshifter()
-        || thing->type != MONS_SLIME_CREATURE)
+        || thing->type != MONS_SLIME_CREATURE
+        || thing->props.exists(OKAWARU_DUEL_CURRENT_KEY))
     {
         return false;
     }
