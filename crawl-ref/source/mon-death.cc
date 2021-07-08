@@ -2792,7 +2792,7 @@ void pikel_band_neutralise()
     string final_msg;
     if (visible_minions > 0 && you.num_turns > 0)
     {
-        if (you.allies_forbidden())
+        if (you.get_mutation_level(MUT_NO_LOVE))
         {
             const char *substr = visible_minions > 1 ? "minions" : "minion";
             final_msg = make_stringf("Pikel's spell is broken, but his former "
