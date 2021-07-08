@@ -16,10 +16,11 @@ end
 }}
 
 NAME:   okawaru_arena
-TAGS:   no_dump no_monster_gen allow_dup
+TAGS:   no_dump no_item_gen allow_dup
 ORIENT: encompass
 KFEAT:  < = exit_arena
 KPROP:  1'< = no_tele_into
+KMASK:  1'< = no_monster_gen
 {{
 local duel_target_marker = TriggerableFunction:new {
     func = "arena_duel_victory",
