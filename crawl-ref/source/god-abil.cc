@@ -5936,20 +5936,20 @@ void wu_jian_heavenly_storm()
     invalidate_agrid(true);
 }
 
-monster* okawaru_duel_monster()
+bool okawaru_duel_active()
 {
     for (monster_iterator mi; mi; ++mi)
     {
         if (mi->props.exists(OKAWARU_DUEL_CURRENT_KEY))
-            return *mi;
+            return true;
     }
 
-    return nullptr;
+    return false;
 }
 
 spret okawaru_duel(bool fail)
 {
-    if (okawaru_duel_monster() || player_in_branch(BRANCH_ARENA))
+    if (okawaru_duel_active() || player_in_branch(BRANCH_ARENA))
     {
         mpr("You are already engaged in single combat!");
         return spret::abort;
@@ -6049,14 +6049,19 @@ void okawaru_remove_finesse()
 void okawaru_end_duel()
 {
     ASSERT(player_in_branch(BRANCH_ARENA));
-    monster* mons = okawaru_duel_monster();
-    if (mons)
+    if (okawaru_duel_active())
     {
-        mons->props.erase(OKAWARU_DUEL_CURRENT_KEY);
-        mons->props[OKAWARU_DUEL_ABANDONED_KEY] = true;
-        mons->set_transit(current_level_parent());
-        mons->destroy_inventory();
-        monster_cleanup(mons);
+        for (monster_iterator mi; mi; ++mi)
+        {
+            if (mi->props.exists(OKAWARU_DUEL_CURRENT_KEY))
+            {
+                mi->props.erase(OKAWARU_DUEL_CURRENT_KEY);
+                mi->props[OKAWARU_DUEL_ABANDONED_KEY] = true;
+                mi->set_transit(current_level_parent());
+                mi->destroy_inventory();
+                monster_cleanup(*mi);
+            }
+        }
     }
 
     mpr("You are returned from the Arena.");

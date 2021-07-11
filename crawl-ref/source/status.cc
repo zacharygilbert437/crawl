@@ -715,7 +715,7 @@ bool fill_status_info(int status, status_info& inf)
         break;
 
     case STATUS_DUEL:
-        if (okawaru_duel_monster())
+        if (okawaru_duel_active())
         {
             inf.light_colour = WHITE;
             inf.light_text   = "Duel";

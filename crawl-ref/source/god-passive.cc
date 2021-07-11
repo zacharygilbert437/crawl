@@ -1707,7 +1707,7 @@ void uskayaw_bonds_audience()
 void okawaru_handle_duel()
 {
     if (player_in_branch(BRANCH_ARENA)
-        && !okawaru_duel_monster()
+        && !okawaru_duel_active()
         && !you.duration[DUR_DUEL_COMPLETE])
     {
         you.set_duration(DUR_DUEL_COMPLETE, random_range(30, 40));

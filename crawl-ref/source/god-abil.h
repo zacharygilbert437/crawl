@@ -196,7 +196,7 @@ bool wu_jian_do_wall_jump(coord_def targ);
 spret wu_jian_wall_jump_ability();
 void wu_jian_heavenly_storm();
 
-monster* okawaru_duel_monster();
+bool okawaru_duel_active();
 spret okawaru_duel(bool fail);
 void okawaru_remove_heroism();
 void okawaru_remove_finesse();
