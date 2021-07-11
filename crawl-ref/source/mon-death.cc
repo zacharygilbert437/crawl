@@ -2345,6 +2345,20 @@ item_def* monster_die(monster& mons, killer_type killer,
         return corpse;
     }
 
+    // If there are other duel targets alive (due to a slime splitting), don't
+    // count this as winning the duel.
+    if (mons.props.exists(OKAWARU_DUEL_CURRENT_KEY))
+    {
+        for (monster_iterator mi; mi; ++mi)
+        {
+            if (mi->props.exists(OKAWARU_DUEL_CURRENT_KEY) && *mi != &mons)
+            {
+                mons.props.erase(OKAWARU_DUEL_CURRENT_KEY);
+                break;
+            }
+        }
+    }
+
     mons_remove_from_grid(mons);
     fire_monster_death_event(&mons, killer, false);
 

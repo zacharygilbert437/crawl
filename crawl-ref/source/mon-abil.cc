@@ -291,6 +291,14 @@ static void _do_merge_slimes(monster* initial_slime, monster* merge_to)
     // this won't do anything weird.
     merge_to->flags |= initial_slime->flags;
 
+    // Transfer duel status over to the merge target.
+    if (initial_slime->props.exists(OKAWARU_DUEL_CURRENT_KEY))
+    {
+        initial_slime->props.erase(OKAWARU_DUEL_CURRENT_KEY);
+        merge_to->props[OKAWARU_DUEL_TARGET_KEY] = true;
+        merge_to->props[OKAWARU_DUEL_CURRENT_KEY] = true;
+    }
+
     // Merging costs the combined slime some energy. The idea is that if 2
     // slimes merge you can gain a space by moving away the turn after (maybe
     // this is too nice but there will probably be a lot of complaints about
@@ -475,12 +483,10 @@ static monster *_slime_split(monster* thing, bool force_split)
 // See if a given slime creature can split or merge.
 static bool _slime_split_merge(monster* thing)
 {
-    // No merging/splitting shapeshifters or duelled targets (due to general
-    // messiness).
+    // No merging/splitting shapeshifters.
     if (!thing
         || thing->is_shapeshifter()
-        || thing->type != MONS_SLIME_CREATURE
-        || thing->props.exists(OKAWARU_DUEL_CURRENT_KEY))
+        || thing->type != MONS_SLIME_CREATURE)
     {
         return false;
     }
