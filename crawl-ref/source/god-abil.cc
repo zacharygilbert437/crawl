@@ -5980,7 +5980,6 @@ spret okawaru_duel(bool fail)
 
     if (mons_is_firewood(*mons)
         || mons_is_conjured(mons->type)
-        || mons->is_summoned()
         || mons_is_tentacle_or_tentacle_segment(mons->type)
         || mons_primary_habitat(*mons) == HT_LAVA
         || mons_primary_habitat(*mons) == HT_WATER
@@ -5993,6 +5992,23 @@ spret okawaru_duel(bool fail)
     if (mons_threat_level(*mons) < MTHRT_TOUGH)
     {
         simple_monster_message(*mons, " is not worthy to be dueled!");
+        return spret::abort;
+    }
+
+    if (mons->is_illusion())
+    {
+        fail_check();
+        mprf("You challenge %s to single combat, but %s is merely a clone!",
+             mons->name(DESC_THE).c_str(),
+             mons->pronoun(PRONOUN_SUBJECTIVE).c_str());
+        // Still costs a turn to gain the information.
+        return spret::success;
+    }
+    // Check this after everything else so as not to waste a turn when trying
+    // to duel a clone that's already invalid to be dueled for other reasons.
+    else if (mons->is_summoned())
+    {
+        mpr("You cannot duel that!");
         return spret::abort;
     }
 
