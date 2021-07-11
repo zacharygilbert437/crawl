@@ -12,6 +12,7 @@ function arena_duel_victory(data, triggerable, triggerer, marker, ev)
     dgn.terrain_changed(x, y, "floor", false)
     crawl.mpr("Okawaru crowns you victorious!", "god")
     crawl.mpr("An exit appears.")
+    triggerable:remove(marker)
 end
 }}
 
@@ -24,7 +25,7 @@ KMASK:  1'< = no_monster_gen
 {{
 local duel_target_marker = TriggerableFunction:new {
     func = "arena_duel_victory",
-    repeated = false
+    repeated = true
 }
 
 duel_target_marker:add_triggerer(DgnTriggerer:new {
