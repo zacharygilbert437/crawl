@@ -2199,10 +2199,16 @@ item_def* monster_die(monster& mons, killer_type killer,
             // All this information may be lost by the time the monster revives.
             const int revives = (mons.props.exists("bennu_revives"))
                               ? mons.props["bennu_revives"].get_byte() : 0;
+            const bool duel = mons.props.exists(OKAWARU_DUEL_CURRENT_KEY);
             const beh_type att = mons.has_ench(ENCH_CHARM)
                                      ? BEH_HOSTILE : SAME_ATTITUDE(&mons);
 
-            bennu_revive_fineff::schedule(mons.pos(), revives, att, mons.foe);
+            // Don't consider this a victory yet, and duel the new bennu.
+            if (duel)
+                mons.props.erase(OKAWARU_DUEL_CURRENT_KEY);
+
+            bennu_revive_fineff::schedule(mons.pos(), revives, att, mons.foe,
+                                          duel);
         }
     }
 
