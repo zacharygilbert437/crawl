@@ -1913,7 +1913,7 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
     dprf("Spell #%d, power=%d", spell, powc);
 
     // Have to set aim first, in case the spellcast kills its first target
-    if (you.props.exists("battlesphere") && allow_fail)
+    if (you.props.exists(BATTLESPHERE_KEY) && allow_fail)
         aim_battlesphere(&you, spell);
 
     const auto orig_target = monster_at(beam.target);
@@ -1934,7 +1934,7 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
             do_demonic_magic(spell_difficulty(spell) * 6, demonic_magic);
         }
 
-        if (you.props.exists("battlesphere") && allow_fail
+        if (you.props.exists(BATTLESPHERE_KEY) && allow_fail
             && battlesphere_can_mirror(spell))
         {
             trigger_battlesphere(&you);

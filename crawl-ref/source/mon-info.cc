@@ -199,11 +199,11 @@ static bool _blocked_ray(const coord_def &where,
 
 static bool _is_public_key(string key)
 {
-    if (key == "helpless"
+    if (key == HELPLESS_KEY
      || key == "feat_type"
      || key == "glyph"
-     || key == "dbname"
-     || key == "monster_tile"
+     || key == DBNAME_KEY
+     || key == MONSTER_TILE_KEY
 #ifdef USE_TILE
      || key == TILE_NUM_KEY
 #endif
@@ -461,8 +461,8 @@ monster_info::monster_info(const monster* m, int milev)
     // Translate references to tentacles into just their locations
     if (mons_is_tentacle_or_tentacle_segment(type))
     {
-        _translate_tentacle_ref(*this, m, "inwards");
-        _translate_tentacle_ref(*this, m, "outwards");
+        _translate_tentacle_ref(*this, m, INWARDS_KEY);
+        _translate_tentacle_ref(*this, m, OUTWARDS_KEY);
     }
 
     base_type = m->base_monster;
@@ -706,9 +706,9 @@ monster_info::monster_info(const monster* m, int milev)
     }
 
     if (m->is_priest())
-        props["priest"] = true;
+        props[PRIEST_KEY] = true;
     else if (m->is_actual_spellcaster())
-        props["actual_spellcaster"] = true;
+        props[ACTUAL_SPELLCASTER_KEY] = true;
 
     // assumes spell hd modifying effects are always public
     const int spellhd = m->spell_hd();
@@ -1015,7 +1015,7 @@ string monster_info::common_name(description_level_type desc) const
 
     ostringstream ss;
 
-    if (props.exists("helpless"))
+    if (props.exists(HELPLESS_KEY))
         ss << "helpless ";
 
     if (is(MB_SUBMERGED))
