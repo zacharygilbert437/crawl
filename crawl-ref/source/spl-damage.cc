@@ -2996,10 +2996,10 @@ spret cast_searing_ray(int pow, bolt &beam, bool fail)
         you.attribute[ATTR_SEARING_RAY] = -1;
         you.props[SEARING_RAY_AIM_SPOT_KEY].get_bool() = beam.aimed_at_spot
                                                             || !mons;
-        you.props[SEARING_RAY_TARGET].get_coord() = beam.target;
+        you.props[SEARING_RAY_TARGET_KEY].get_coord() = beam.target;
 
         if (mons)
-            you.props[SEARING_RAY_MID].get_int() = mons->mid;
+            you.props[SEARING_RAY_MID_KEY].get_int() = mons->mid;
 
         string msg = "(Press <w>%</w> to maintain the ray.)";
         insert_commands(msg, { CMD_WAIT });
@@ -3049,11 +3049,11 @@ void handle_searing_ray()
     if (!you.props[SEARING_RAY_AIM_SPOT_KEY].get_bool())
     {
         monster* mons = nullptr;
-        mons = monster_by_mid(you.props[SEARING_RAY_MID].get_int());
+        mons = monster_by_mid(you.props[SEARING_RAY_MID_KEY].get_int());
         // homing targeting, save the target location in case it dies or
         // disappears
         if (mons && mons->alive() && you.can_see(*mons))
-            you.props[SEARING_RAY_TARGET].get_coord() = mons->pos();
+            you.props[SEARING_RAY_TARGET_KEY].get_coord() = mons->pos();
         else
             you.props[SEARING_RAY_AIM_SPOT_KEY] = true;
     }
@@ -3062,7 +3062,7 @@ void handle_searing_ray()
     beam.thrower = KILL_YOU_MISSILE;
     beam.range   = calc_spell_range(SPELL_SEARING_RAY, pow);
     beam.source  = you.pos();
-    beam.target  = you.props[SEARING_RAY_TARGET].get_coord();
+    beam.target  = you.props[SEARING_RAY_TARGET_KEY].get_coord();
 
     // If friendlies have moved into the beam path, give a chance to abort
     if (!player_tracer(zap, pow, beam))
@@ -3091,7 +3091,7 @@ void handle_searing_ray()
 void end_searing_ray()
 {
     you.attribute[ATTR_SEARING_RAY] = 0;
-    you.props.erase(SEARING_RAY_TARGET);
+    you.props.erase(SEARING_RAY_TARGET_KEY);
     you.props.erase(SEARING_RAY_AIM_SPOT_KEY);
 }
 
