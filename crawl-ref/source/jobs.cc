@@ -81,10 +81,13 @@ void job_stat_init(job_type job)
     {
         for (int i = 0; i < 12; i++)
         {
+            int str_weight = one_chance_in(10) ? 4 : 2;
+            int dex_weight = one_chance_in(10) ? 4 : 2;
+            int int_weight = one_chance_in(10) ? 4 : 2;
             const auto stat = random_choose_weighted(
-                    you.base_stats[STAT_STR] > 17 ? 1 : 2, STAT_STR,
-                    you.base_stats[STAT_INT] > 17 ? 1 : 2, STAT_INT,
-                    you.base_stats[STAT_DEX] > 17 ? 1 : 2, STAT_DEX);
+                    you.base_stats[STAT_STR] > 19 ? 1 : str_weight, STAT_STR,
+                    you.base_stats[STAT_INT] > 19 ? 1 : int_weight, STAT_INT,
+                    you.base_stats[STAT_DEX] > 19 ? 1 : dex_weight, STAT_DEX);
             you.base_stats[stat]++;
         }
     }
