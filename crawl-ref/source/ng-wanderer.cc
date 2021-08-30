@@ -149,6 +149,7 @@ static void _assign_wanderer_stats(skill_type sk1, skill_type sk2,
             case SK_UNARMED_COMBAT:
             case SK_FIGHTING:
             case SK_EVOCATIONS:
+            case SK_THROWING:
                 if (coinflip())
                     str_count++;
                 else
@@ -220,13 +221,13 @@ static skill_type _wanderer_role_weapon_select(bool defense)
           SK_SLINGS, SK_SUMMONINGS, SK_NECROMANCY, SK_TRANSLOCATIONS,
           SK_TRANSMUTATIONS, SK_POISON_MAGIC, SK_CONJURATIONS,
           SK_HEXES, SK_FIRE_MAGIC, SK_ICE_MAGIC, SK_SPELLCASTING,
-          SK_AIR_MAGIC, SK_EARTH_MAGIC, SK_FIGHTING };
+          SK_AIR_MAGIC, SK_EARTH_MAGIC, SK_FIGHTING};
 
     int offense_size = ARRAYSZ(offense_skills);
 
     const skill_type defense_skills[] =
         { SK_FIGHTING, SK_DODGING, SK_ARMOUR, SK_SHIELDS, SK_EVOCATIONS,
-          SK_STEALTH };
+          SK_STEALTH, SK_THROWING };
 
     int defense_size = ARRAYSZ(defense_skills);
 
