@@ -28,7 +28,7 @@ static void _give_wanderer_weapon(skill_type wpn_skill, bool good_item)
         {
             if (one_chance_in(3))
             {
-                newgame_make_item(OBJ_MISSILES, MI_BOOMERANG, 
+                newgame_make_item(OBJ_MISSILES, MI_BOOMERANG,
                               4 + roll_dice(2, 3), 0, SPMSL_NORMAL);
             }
             else
@@ -56,7 +56,7 @@ static void _give_wanderer_weapon(skill_type wpn_skill, bool good_item)
         break;
 
     case SK_MACES_FLAILS:
-        sub_type = upgrade_base ? WPN_FLAIL : one_chance_in(4) ? 
+        sub_type = upgrade_base ? WPN_FLAIL : one_chance_in(4) ?
                     WPN_WHIP : WPN_MACE;
         break;
 
@@ -86,7 +86,7 @@ static void _give_wanderer_weapon(skill_type wpn_skill, bool good_item)
         if (upgrade_base)
             ego = SPWPN_VORPAL;
         break;
-        
+
     case SK_SLINGS:
         sub_type = WPN_HUNTING_SLING;
         if (upgrade_base)
@@ -99,7 +99,7 @@ static void _give_wanderer_weapon(skill_type wpn_skill, bool good_item)
             ego = SPWPN_VORPAL;
         break;
     }
-    
+
     if (good_item && !upgrade_base)
             plus = 2;
 
@@ -114,26 +114,75 @@ static void _give_wanderer_weapon(skill_type wpn_skill, bool good_item)
         newgame_make_item(OBJ_MISSILES, MI_SLING_BULLET, 15 + random2avg(9, 2));
 }
 
-// The overall role choice for wanderers is a weighted chance based on
-// stats.
-static stat_type _wanderer_choose_role()
+static void _assign_wanderer_stats(skill_type sk1, skill_type sk2,
+                                    skill_type sk3)
 {
-    int total_stats = 0;
-    for (int i = 0; i < NUM_STATS; ++i)
-        total_stats += you.stat(static_cast<stat_type>(i));
+    skill_type skills[] = {sk1, sk2, sk3};
+    int str_count = 0;
+    int dex_count = 0;
+    int int_count = 0;
 
-    int target = random2(total_stats);
+    for (int i = 0; i < (int)ARRAYSZ(skills); i++)
+    {
+        skill_type sk = skills[i];
+        switch (sk)
+        {
+            case SK_AXES:
+            case SK_MACES_FLAILS:
+            case SK_BOWS:
+            case SK_CROSSBOWS:
+            case SK_ARMOUR:
+                str_count++;
+                break;
 
-    stat_type role;
+            case SK_SHORT_BLADES:
+            case SK_LONG_BLADES:
+            case SK_STAVES:
+            case SK_SLINGS:
+            case SK_DODGING:
+            case SK_SHIELDS:
+            case SK_STEALTH:
+                dex_count++;
+                break;
 
-    if (target < you.strength())
-        role = STAT_STR;
-    else if (target < (you.dex() + you.strength()))
-        role = STAT_DEX;
-    else
-        role = STAT_INT;
+            case SK_POLEARMS:
+            case SK_UNARMED_COMBAT:
+            case SK_FIGHTING:
+            case SK_EVOCATIONS:
+                if (coinflip())
+                    str_count++;
+                else
+                    dex_count++;
+                break;
 
-    return role;
+            case SK_SPELLCASTING:
+            case SK_SUMMONINGS:
+            case SK_NECROMANCY:
+            case SK_TRANSLOCATIONS:
+            case SK_TRANSMUTATIONS:
+            case SK_POISON_MAGIC:
+            case SK_CONJURATIONS:
+            case SK_HEXES:
+            case SK_FIRE_MAGIC:
+            case SK_ICE_MAGIC:
+            case SK_AIR_MAGIC:
+            case SK_EARTH_MAGIC:
+                int_count++;
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    for (int i = 0; i < 12; i++)
+    {
+        const auto stat = random_choose_weighted(
+                you.base_stats[STAT_STR] > 17 ? 1 : 2 + 2*str_count, STAT_STR,
+                you.base_stats[STAT_INT] > 17 ? 1 : 2 + 2*int_count, STAT_INT,
+                you.base_stats[STAT_DEX] > 17 ? 1 : 2 + 2*dex_count, STAT_DEX);
+            you.base_stats[stat]++;
+    }
 }
 
 static skill_type _apt_weighted_choice(const skill_type * skill_array,
@@ -162,62 +211,31 @@ static skill_type _apt_weighted_choice(const skill_type * skill_array,
     return NUM_SKILLS;
 }
 
-static skill_type _wanderer_role_weapon_select(stat_type role)
+static skill_type _wanderer_role_weapon_select(bool defense)
 {
     skill_type skill = NUM_SKILLS;
-    const skill_type str_weapons[] =
+    const skill_type offense_skills[] =
         { SK_AXES, SK_MACES_FLAILS, SK_BOWS, SK_CROSSBOWS, SK_POLEARMS,
-          SK_ARMOUR, SK_ARMOUR, SK_FIGHTING, SK_EVOCATIONS, SK_SHIELDS };
-
-    int str_size = ARRAYSZ(str_weapons);
-
-    const skill_type dex_weapons[] =
-        { SK_SHORT_BLADES, SK_LONG_BLADES, SK_STAVES, SK_UNARMED_COMBAT,
-          SK_STEALTH, SK_DODGING, SK_DODGING, SK_FIGHTING, SK_SLINGS};
-
-    int dex_size = ARRAYSZ(dex_weapons);
-
-    const skill_type casting_schools[] =
-        { SK_SUMMONINGS, SK_NECROMANCY, SK_TRANSLOCATIONS,
+          SK_SHORT_BLADES, SK_LONG_BLADES, SK_STAVES, SK_UNARMED_COMBAT,
+          SK_SLINGS, SK_SUMMONINGS, SK_NECROMANCY, SK_TRANSLOCATIONS,
           SK_TRANSMUTATIONS, SK_POISON_MAGIC, SK_CONJURATIONS,
-          SK_HEXES, SK_FIRE_MAGIC, SK_ICE_MAGIC,
-          SK_AIR_MAGIC, SK_EARTH_MAGIC };
+          SK_HEXES, SK_FIRE_MAGIC, SK_ICE_MAGIC, SK_SPELLCASTING,
+          SK_AIR_MAGIC, SK_EARTH_MAGIC, SK_FIGHTING };
 
-    int casting_size = ARRAYSZ(casting_schools);
+    int offense_size = ARRAYSZ(offense_skills);
 
-    switch ((int)role)
-    {
-    case STAT_STR:
-        skill = _apt_weighted_choice(str_weapons, str_size);
-        break;
+    const skill_type defense_skills[] =
+        { SK_FIGHTING, SK_DODGING, SK_ARMOUR, SK_SHIELDS, SK_EVOCATIONS,
+          SK_STEALTH };
 
-    case STAT_DEX:
-        skill = _apt_weighted_choice(dex_weapons, dex_size);
-        break;
+    int defense_size = ARRAYSZ(defense_skills);
 
-    case STAT_INT:
-        skill = _apt_weighted_choice(casting_schools, casting_size);
-        break;
-    }
+    if (defense)
+        skill = _apt_weighted_choice(defense_skills, defense_size);
+    else
+        skill = _apt_weighted_choice(offense_skills, offense_size);
 
     return skill;
-}
-
-static void _wanderer_role_skill(stat_type role, int levels)
-{
-    skill_type weapon_type = _wanderer_role_weapon_select(role);
-    skill_type spell2 = NUM_SKILLS;
-
-    if (role == STAT_INT)
-       spell2 = _wanderer_role_weapon_select(role);
-
-    skill_type selected_skill = NUM_SKILLS;
-    for (int i = 0; i < levels; ++i)
-    {
-        selected_skill = _wanderer_role_skill_select(role, weapon_type,
-                                                     spell2);
-        you.skills[selected_skill]++;
-    }
 }
 
 static void _setup_starting_skills(skill_type sk1, skill_type sk2,
@@ -226,7 +244,7 @@ static void _setup_starting_skills(skill_type sk1, skill_type sk2,
     int martial = 0;
     int magical = 0;
     skill_type skills[] = {sk1, sk2, sk3};
-    
+
     for (int i = 0; i < (int)ARRAYSZ(skills); i++)
     {
         skill_type sk = skills[i];
@@ -235,9 +253,9 @@ static void _setup_starting_skills(skill_type sk1, skill_type sk2,
         else if (sk > SK_LAST_MUNDANE && sk <= SK_LAST_MAGIC)
             magical++;
     }
-    
+
     skill_type selected = SK_FIGHTING;
-    
+
     do
     {
         selected = random_choose_weighted(8, sk1,
@@ -252,34 +270,14 @@ static void _setup_starting_skills(skill_type sk1, skill_type sk2,
                                           2, SK_EVOCATIONS,
                                           1, SK_INVOCATIONS);
 
-        if(!is_useless_skill(selected) && selected != SK_NONE)
+        if (!is_useless_skill(selected) && selected != SK_NONE
+            && you.skills[selected] < 5)
         {
             you.skills[selected]++;
             levels--;
         }
     }
     while (levels > 0);
-}
-
-// Select a random skill from all skills we have at least 1 level in.
-static skill_type _weighted_skill_roll()
-{
-    int total_skill = 0;
-
-    for (unsigned i = 0; i < NUM_SKILLS; ++i)
-        total_skill += you.skills[i];
-
-    int probe = random2(total_skill);
-    int covered_region = 0;
-
-    for (unsigned i = 0; i < NUM_SKILLS; ++i)
-    {
-        covered_region += you.skills[i];
-        if (probe < covered_region)
-            return skill_type(i);
-    }
-
-    return NUM_SKILLS;
 }
 
 static job_type _job_for_skill(skill_type skill)
@@ -395,7 +393,7 @@ static vector<spell_type> _give_wanderer_major_spells(skill_type skill)
     spschool school = skill2spell_type(skill);
     vector<spell_type> spells;
     set<spell_type> spellset;
-    
+
     for (int i = 0; i < 4; i++)
     {
        spell_type next_spell = SPELL_NO_SPELL;
@@ -411,26 +409,26 @@ static vector<spell_type> _give_wanderer_major_spells(skill_type skill)
             {
                 continue;
             }
-            
+
             const int limit = i == 0 ? 1 : 4;
             if (spell_difficulty(spell) > limit)
                 continue;
-            
+
             if (one_chance_in(++seen))
             {
                 next_spell = spell;
             }
         }
-        
+
         // this could happen if a spell school has no level 1 spell, or has
         // less than 4 learnable spells for the player's species
-        if(next_spell != SPELL_NO_SPELL)
+        if (next_spell != SPELL_NO_SPELL)
         {
             spellset.insert(next_spell);
             spells.push_back(next_spell);
         }
     }
-    
+
     library_add_spells(spells);
     return spells;
 }
@@ -531,14 +529,14 @@ static void _wanderer_random_evokable()
                             WAND_MINDBURST, WAND_POLYMORPH, WAND_ACID,
                             WAND_ICEBLAST);
         int charges;
-        switch(selected_wand)
+        switch (selected_wand)
         {
         // completely nuts
         case WAND_ACID:
         case WAND_ICEBLAST:
             charges = 2 + random2(3);
         break;
-            
+
         // extremely strong
         case WAND_CHARMING:
         case WAND_PARALYSIS:
@@ -556,7 +554,7 @@ static void _wanderer_random_evokable()
             charges = 15;
             break;
         }
-        
+
         newgame_make_item(OBJ_WANDS, selected_wand, 1, charges);
     }
 }
@@ -595,7 +593,7 @@ static vector<spell_type> _wanderer_good_equipment(skill_type & skill)
     case SK_ARMOUR:
         if (coinflip())
             newgame_make_item(OBJ_ARMOUR, ARM_SCALE_MAIL, 1, 2);
-        else 
+        else
             newgame_make_item(OBJ_ARMOUR, ARM_CHAIN_MAIL, 1, 0);
         break;
 
@@ -682,7 +680,7 @@ static vector<spell_type> _wanderer_decent_equipment(skill_type & skill,
     // a decent consumable
     if (gift_skills.count(skill))
         skill = SK_NONE;
-    
+
     // don't give the player a second body armour
     if (gift_skills.count(SK_ARMOUR) && skill == SK_DODGING
         || (gift_skills.count(SK_DODGING) && skill == SK_ARMOUR))
@@ -731,7 +729,7 @@ static vector<spell_type> _wanderer_decent_equipment(skill_type & skill,
         if (one_chance_in(3))
             newgame_make_item(OBJ_MISCELLANY, MISC_XOMS_CHESSBOARD, 1);
         else
-            newgame_make_item(OBJ_WANDS, coinflip() ? WAND_FLAME 
+            newgame_make_item(OBJ_WANDS, coinflip() ? WAND_FLAME
                                 : WAND_POLYMORPH, 1, 3 + random2(5));
         break;
 
@@ -809,19 +807,17 @@ void create_wanderer()
     rng::subgenerator wn_rng;
     if (you.char_class != JOB_WANDERER)
         return;
-
-    // Decide what our character roles are.
-    stat_type primary_role   = _wanderer_choose_role();
-    stat_type secondary_role = _wanderer_choose_role();
-    stat_type tertiary_role  = _wanderer_choose_role();
-
     // Keep track of what skills we got items from, mostly to prevent
     // giving a good and then a normal version of the same weapon.
     set<skill_type> gift_skills;
-    
-    skill_type gift_skill_1 = _wanderer_role_weapon_select(primary_role);
-    skill_type gift_skill_2 = _wanderer_role_weapon_select(secondary_role);
-    skill_type gift_skill_3 = _wanderer_role_weapon_select(tertiary_role);
+
+    // always give at least one "offense skill"
+    skill_type gift_skill_1 = _wanderer_role_weapon_select(one_chance_in(3));
+    skill_type gift_skill_2 = _wanderer_role_weapon_select(false);
+    skill_type gift_skill_3 = _wanderer_role_weapon_select(coinflip());
+
+    // assign remaining wanderer stat points according to gift skills
+    _assign_wanderer_stats(gift_skill_1, gift_skill_2, gift_skill_3);
 
     // Wanderers get 1 good thing, a couple average things, and then
     // 1 last stage to fill any glaring equipment holes (no clothes,
@@ -835,7 +831,7 @@ void create_wanderer()
     gift_skills.insert(gift_skill_2);
     _add_spells(spells, _wanderer_decent_equipment(gift_skill_3, gift_skills));
     gift_skills.insert(gift_skill_3);
-    
+
     _setup_starting_skills(gift_skill_1, gift_skill_2, gift_skill_3, 10);
 
     _handle_start_spells(spells);
