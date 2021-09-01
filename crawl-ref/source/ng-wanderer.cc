@@ -234,7 +234,7 @@ static skill_type _wanderer_role_weapon_select(bool defense)
     if (defense)
         skill = _apt_weighted_choice(defense_skills, defense_size);
     // give Djinn some help since they only have one magic apt
-    else if(you.has_mutation(MUT_INNATE_CASTER) && coinflip())
+    else if (you.has_mutation(MUT_INNATE_CASTER) && coinflip())
         skill = SK_SPELLCASTING;
     else
         skill = _apt_weighted_choice(offense_skills, offense_size);
@@ -257,7 +257,7 @@ static void _setup_starting_skills(skill_type sk1, skill_type sk2,
         else if (sk > SK_LAST_MUNDANE && sk <= SK_LAST_MAGIC)
         {
             // handle Djinn
-            if(you.has_mutation(MUT_INNATE_CASTER))
+            if (you.has_mutation(MUT_INNATE_CASTER))
                 sk = SK_SPELLCASTING;
             magical++;
         }
@@ -577,15 +577,15 @@ static vector<spell_type> _wanderer_good_equipment(skill_type & skill)
           SK_POLEARMS, SK_SLINGS };
 
     int total_weapons = ARRAYSZ(combined_weapon_skills);
-    
+
     // Normalise the input type.
     if (skill == SK_FIGHTING)
     {
         skill =  _apt_weighted_choice(combined_weapon_skills, total_weapons);
     }
-    
+
     // handle Djinn
-    if(you.has_mutation(MUT_INNATE_CASTER) && skill == SK_SPELLCASTING)
+    if (you.has_mutation(MUT_INNATE_CASTER) && skill == SK_SPELLCASTING)
     {
         skill = (skill_type)(SK_SPELLCASTING + random2(SK_LAST_MAGIC
                     - SK_SPELLCASTING + 1));
@@ -680,12 +680,12 @@ static vector<spell_type> _wanderer_decent_equipment(skill_type & skill,
                                                      set<skill_type> & gift_skills)
 {
     // handle Djinn
-    if(you.has_mutation(MUT_INNATE_CASTER) && skill == SK_SPELLCASTING)
+    if (you.has_mutation(MUT_INNATE_CASTER) && skill == SK_SPELLCASTING)
     {
         skill = (skill_type)(SK_SPELLCASTING + random2(SK_LAST_MAGIC
                     - SK_SPELLCASTING + 1));
     }
-    
+
     // Don't give a gift from the same skill twice; just default to
     // a decent consumable
     if (gift_skills.count(skill))
