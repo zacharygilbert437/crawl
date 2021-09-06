@@ -5,6 +5,7 @@
 #include "item-prop.h"
 #include "items.h"
 #include "jobs.h"
+#include "newgame.h"
 #include "ng-setup.h"
 #include "potion-type.h"
 #include "randbook.h"
@@ -48,24 +49,23 @@ static void _give_wanderer_weapon(skill_type wpn_skill, bool good_item)
     switch (wpn_skill)
     {
     case SK_SHORT_BLADES:
-        sub_type = upgrade_base ? WPN_RAPIER : WPN_SHORT_SWORD;
+        sub_type = WPN_SHORT_SWORD;
         break;
 
     case SK_LONG_BLADES:
-        sub_type = upgrade_base ? WPN_LONG_SWORD : WPN_FALCHION;
+        sub_type = WPN_FALCHION;
         break;
 
     case SK_MACES_FLAILS:
-        sub_type = upgrade_base ? WPN_FLAIL : one_chance_in(4) ?
-                    WPN_WHIP : WPN_MACE;
+        sub_type = WPN_MACE;
         break;
 
     case SK_AXES:
-        sub_type = upgrade_base ? WPN_WAR_AXE : WPN_HAND_AXE;
+        sub_type = WPN_HAND_AXE;
         break;
 
     case SK_POLEARMS:
-        sub_type = upgrade_base ? WPN_TRIDENT : WPN_SPEAR;
+        sub_type = WPN_SPEAR;
         break;
 
     // remaining types can't have basetype upgraded, so offer vorpal instead
@@ -100,8 +100,13 @@ static void _give_wanderer_weapon(skill_type wpn_skill, bool good_item)
         break;
     }
 
-    if (good_item && !upgrade_base)
-            plus = 2;
+    if (upgrade_base)
+    {
+        sub_type = starting_weapon_upgrade(sub_type, you.char_class,
+                                            you.species);
+    }
+    else if (good_item)
+        plus = 2;
 
     newgame_make_item(OBJ_WEAPONS, sub_type, 1, plus, ego);
 
@@ -424,9 +429,7 @@ static vector<spell_type> _give_wanderer_major_spells(skill_type skill)
                 continue;
 
             if (one_chance_in(++seen))
-            {
                 next_spell = spell;
-            }
         }
 
         // this could happen if a spell school has no level 1 spell, or has
@@ -580,9 +583,7 @@ static vector<spell_type> _wanderer_good_equipment(skill_type & skill)
 
     // Normalise the input type.
     if (skill == SK_FIGHTING)
-    {
         skill =  _apt_weighted_choice(combined_weapon_skills, total_weapons);
-    }
 
     // handle Djinn
     if (you.has_mutation(MUT_INNATE_CASTER) && skill == SK_SPELLCASTING)
@@ -632,12 +633,20 @@ static vector<spell_type> _wanderer_good_equipment(skill_type & skill)
 
 
     case SK_SHIELDS:
-        if (one_chance_in(10))
-            newgame_make_item(OBJ_ARMOUR, ARM_BUCKLER, 1, 0, SPARM_PROTECTION);
-        else if (one_chance_in(4))
-            newgame_make_item(OBJ_ARMOUR, ARM_BUCKLER, 1, 2);
-        else
-            newgame_make_item(OBJ_ARMOUR, ARM_KITE_SHIELD);
+        switch (random2(10))
+        {
+            case 0:
+                newgame_make_item(OBJ_ARMOUR, ARM_BUCKLER, 1, 0,
+                    SPARM_PROTECTION);
+                break;
+            case 1:
+            case 2:
+                newgame_make_item(OBJ_ARMOUR, ARM_BUCKLER, 1, 2);
+                break;
+            default:
+                newgame_make_item(OBJ_ARMOUR, ARM_KITE_SHIELD);
+                break;
+        }
         break;
 
     case SK_CONJURATIONS:
@@ -653,7 +662,7 @@ static vector<spell_type> _wanderer_good_equipment(skill_type & skill)
     case SK_HEXES:
         if (one_chance_in(3))
             return _give_wanderer_major_spells(skill);
-    // deliberate fallthrough
+    // deliberate fallthrough to SK_SPELLCASTING
     case SK_SPELLCASTING:
         return _give_wanderer_job_spells(skill);
 
@@ -694,7 +703,9 @@ static vector<spell_type> _wanderer_decent_equipment(skill_type & skill,
     // don't give the player a second body armour
     if (gift_skills.count(SK_ARMOUR) && skill == SK_DODGING
         || (gift_skills.count(SK_DODGING) && skill == SK_ARMOUR))
+    {
         skill = SK_NONE;
+    }
 
     switch (skill)
     {
@@ -800,9 +811,7 @@ static void _handle_start_spells(const vector<spell_type> &spells)
         }
         // give stones for use with sandblast
         if (s == SPELL_SANDBLAST)
-        {
             newgame_make_item(OBJ_MISSILES, MI_STONE, 10 + random2avg(41, 5));
-        }
     }
     if (lvl_1s == 1 && !spell_is_useless(to_memorise, false, true))
         add_spell_to_memory(to_memorise);
