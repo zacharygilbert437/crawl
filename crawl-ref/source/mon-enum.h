@@ -40,11 +40,12 @@ enum attack_type
     AT_SPLASH,
 #endif
     AT_POUNCE,
+    AT_DANCE,
 #if TAG_MAJOR_VERSION == 34
     AT_REACH_STING,
     AT_LAST_REAL_ATTACK = AT_REACH_STING,
 #else
-    AT_LAST_REAL_ATTACK = AT_POUNCE,
+    AT_LAST_REAL_ATTACK = AT_DANCE,
 #endif
 
     AT_CHERUB,
