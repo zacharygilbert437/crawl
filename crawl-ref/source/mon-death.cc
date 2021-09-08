@@ -45,6 +45,7 @@
 #include "message.h"
 #include "mon-abil.h"
 #include "mon-behv.h"
+#include "mon-cast.h"
 #include "mon-explode.h"
 #include "mon-gear.h"
 #include "mon-place.h"
@@ -1037,6 +1038,22 @@ static void _infestation_create_scarab(monster* mons)
 {
     mons->flags |= MF_EXPLODE_KILL;
     infestation_death_fineff::schedule(mons->pos(), mons->name(DESC_THE));
+}
+
+static void _pharaoh_ant_bind_souls(monster *mons)
+{
+    simple_monster_message(*mons, " binds the souls of nearby monsters.");
+    for (monster_near_iterator mi(mons, LOS_NO_TRANS); mi; ++mi)
+    {
+        if (*mi == mons)
+            continue;
+        if (mons_can_bind_soul(mons, *mi))
+        {
+            mi->add_ench(
+                mon_enchant(ENCH_BOUND_SOUL, 0, mons,
+                            random_range(10, 30) * BASELINE_DELAY));
+        }
+    }
 }
 
 static void _monster_die_cloud(const monster* mons, bool corpse, bool silent,
@@ -2296,6 +2313,9 @@ item_def* monster_die(monster& mons, killer_type killer,
     }
     if (mons.has_ench(ENCH_BOUND_SOUL))
         _make_derived_undead(&mons, !death_message, true);
+    
+    if (!mons.is_summoned() && mons.type == MONS_PHARAOH_ANT)
+        _pharaoh_ant_bind_souls(&mons);
 
     const unsigned int player_xp = gives_player_xp
         ? _calc_player_experience(&mons) : 0;
