@@ -104,6 +104,7 @@ natasha MONS_NATASHA
 ## Bees ('y')
 killer_bee MONS_KILLER_BEE
 queen_bee MONS_QUEEN_BEE
+miner_bee MONS_MINER_BEE
 %sdir mon/demihumanoids
 meliai MONS_MELIAI
 %sdir mon/animals

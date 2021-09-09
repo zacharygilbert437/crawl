@@ -1716,6 +1716,10 @@ merfolk siren
 
 A beguiling merfolk whose voice can mesmerize listeners.
 %%%%
+miner bee
+
+A solitary bee capable of impressive feats of burrowing.
+%%%%
 minotaur
 
 A large muscular human with the head of a bull. It makes its home in a

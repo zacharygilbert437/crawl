@@ -89,6 +89,7 @@ steelbarb_worm CORPSE_STEELBARB_WORM
 ## Flying Insects ('y')
 killer_bee CORPSE_KILLER_BEE
 queen_bee CORPSE_QUEEN_BEE
+miner_bee CORPSE_MINER_BEE
 vampire_mosquito CORPSE_VAMPIRE_MOSQUITO
 hornet CORPSE_HORNET
 spark_wasp CORPSE_SPARK_WASP
