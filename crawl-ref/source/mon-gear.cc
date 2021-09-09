@@ -511,6 +511,10 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
             { { SPWPN_CHAOS, 1 } } } },
         { MONS_JOSEPH, { { { WPN_QUARTERSTAFF, 1 } } } },
         { MONS_SPRIGGAN_DRUID, { { { WPN_QUARTERSTAFF, 1 } } } },
+        { MONS_JOROGUMO,
+            { { { WPN_QUARTERSTAFF,        20 },
+                { WPN_LAJATANG,            1 },
+        }, {}, {}, 1 } },
         { MONS_BAI_SUZHEN, { { { WPN_QUARTERSTAFF, 1 } } } },
         { MONS_ORC,                     { ORC_WEAPONS } },
         { MONS_ORC_PRIEST,              { ORC_WEAPONS } },
@@ -2026,6 +2030,7 @@ int make_mons_armour(monster_type type, int level)
     case MONS_SPRIGGAN:
     case MONS_SPRIGGAN_AIR_MAGE:
     case MONS_SPRIGGAN_DEFENDER:
+    case MONS_JOROGUMO:
         item.base_type = OBJ_ARMOUR;
         item.sub_type  = ARM_ROBE;
         break;
