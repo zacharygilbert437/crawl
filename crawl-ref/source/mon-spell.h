@@ -578,6 +578,12 @@ static const mon_spellbook mspell_list[] =
        { SPELL_IOOD, 80, MON_SPELL_MAGICAL },
       }
     },
+    
+    {  MST_BROODMOTHER,
+      {
+       { SPELL_SUMMON_SPIDERS, 30, MON_SPELL_NATURAL },
+      }
+    },
 
     // ('t') Testudines.
     {  MST_ALLIGATOR,

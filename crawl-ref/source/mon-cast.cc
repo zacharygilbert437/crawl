@@ -1713,6 +1713,7 @@ bool setup_mons_cast(const monster* mons, bolt &pbolt, spell_type spell_cast,
     case SPELL_SUMMON_ILLUSION:
     case SPELL_SUMMON_DEMON:
     case SPELL_MONSTROUS_MENAGERIE:
+    case SPELL_SUMMON_SPIDERS:
 #if TAG_MAJOR_VERSION == 34
     case SPELL_ANIMATE_DEAD:
     case SPELL_TWISTED_RESURRECTION:
@@ -5831,6 +5832,10 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
     case SPELL_MONSTROUS_MENAGERIE:
         cast_monstrous_menagerie(mons, splpow, mons->god);
+        return;
+        
+    case SPELL_SUMMON_SPIDERS:
+        summon_spiders(*mons, splpow, mons->god);
         return;
 
     case SPELL_CALL_IMP:

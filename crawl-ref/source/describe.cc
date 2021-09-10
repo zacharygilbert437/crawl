@@ -3773,6 +3773,7 @@ static string _flavour_base_desc(attack_flavour flavour)
         { AF_REACH_TONGUE,      "deal extra acid damage" },
         { AF_WEAKNESS,          "cause weakness" },
         { AF_BARBS,             "embed barbs" },
+        { AF_SPIDER,            "summon a spider" },
         { AF_KITE,              "" },
         { AF_SWOOP,             "" },
         { AF_PLAIN,             "" },

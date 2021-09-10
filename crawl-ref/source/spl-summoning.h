@@ -123,3 +123,6 @@ spret fedhas_grow_oklob(bool fail);
 
 spret cast_foxfire(actor &agent, int pow, god_type god, bool fail);
 spret foxfire_swarm();
+bool summon_a_spider(const actor &agent, coord_def pos, god_type god,
+                        spell_type spell, int pow);
+spret summon_spiders(actor &agent, int pow, god_type god, bool fail = false);
