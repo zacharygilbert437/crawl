@@ -170,6 +170,8 @@ protected:
     void drain_defender();
     void drain_defender_speed();
 
+    bool verbose = true;
+
     virtual int inflict_damage(int dam, beam_type flavour = NUM_BEAMS,
                                bool clean = false);
 

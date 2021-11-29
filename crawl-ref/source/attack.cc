@@ -81,6 +81,10 @@ bool attack::handle_phase_blocked()
     if (attacker->is_player())
         behaviour_event(defender->as_monster(), ME_WHACK, attacker);
 
+    if(verbose){
+        mprf("Attack blocked!");
+    }
+
     return true;
 }
 
@@ -100,6 +104,9 @@ bool attack::handle_phase_damaged()
             blood = defender->stat_hp();
         if (blood)
             blood_fineff::schedule(defender, defender->pos(), blood);
+        if(verbose){
+            mprf(defender->name + " is bleeding! Health lost per turn: " + blood);
+        }
     }
 
     announce_hit();
@@ -1243,12 +1250,40 @@ int attack::calc_damage()
         potential_damage = player_stat_modify_damage(potential_damage);
 
         damage = random2(potential_damage+1);
+        if(verbose){
+            mprf("Base damamge: " + damage);
+        }
 
+        int temp_dmg = damage;
         damage = player_apply_weapon_skill(damage);
+        if(verbose){
+            curr_dmg = damage - temp_dmg;
+            mprf("Damage from weapon skill: " + curr_dmg);
+        }
+
+        temp_dmg = damage;
         damage = player_apply_fighting_skill(damage, false);
+        if(verbose){
+            curr_dmg = damage - temp_dmg;
+            mprf("Damage from fighting skill: " + curr_dmg);
+        }
+
+        temp_dmg = damage;
         damage = player_apply_misc_modifiers(damage);
+        if(verbose){
+            curr_dmg = damage - temp_dmg;
+            mprf("Damage from modifiers: " + curr_dmg);
+        }
+
+        temp_dmg = damage;
         damage = player_apply_slaying_bonuses(damage, false);
+        if(verbose){
+            curr_dmg = damage - temp_dmg;
+            mprf("Damage from slaying bonus: " + curr_dmg);
+        }
+
         damage = player_stab(damage);
+
         // A failed stab may have awakened monsters, but that could have
         // caused the defender to cease to exist (spectral weapons with
         // missing summoners; or pacified monsters on a stair). FIXME:
