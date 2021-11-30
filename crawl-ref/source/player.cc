@@ -2713,7 +2713,9 @@ void level_change(bool skip_attribute_increase)
                      new_exp);
             }
 
-            const bool manual_stat_level = new_exp % 3 == 0;  // 3,6,9,12...
+            const bool manual_stat_level = you.has_mutation(MUT_DIVINE_ATTRS)
+                ? (new_exp % 3 == 0)  // 3,6,9,12...
+                : (new_exp % 6 == 3); // 3,9,15,21,27
 
             // Must do this before actually changing experience_level,
             // so we will re-prompt on load if a hup is received.
@@ -7243,18 +7245,18 @@ int player::beam_resists(bolt &beam, int hurted, bool doEffects, string source)
     return check_your_resists(hurted, beam.flavour, source, &beam, doEffects);
 }
 
-bool player::shaftable() const
+bool player::shaftable(bool check_terrain) const
 {
     return is_valid_shaft_level()
-        && feat_is_shaftable(env.grid(pos()))
+        && (!check_terrain || feat_is_shaftable(env.grid(pos())))
         && !duration[DUR_SHAFT_IMMUNITY];
 }
 
 // Used for falling into traps and other bad effects, but is a slightly
 // different effect from the player invokable ability.
-bool player::do_shaft()
+bool player::do_shaft(bool check_terrain)
 {
-    if (!shaftable())
+    if (!shaftable(check_terrain))
         return false;
 
     // Ensure altars, items, and shops discovered at the moment

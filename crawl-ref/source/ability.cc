@@ -1580,6 +1580,27 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
         }
         return true;
 
+    case ABIL_YRED_ANIMATE_REMAINS:
+        if (animate_remains(you.pos(), CORPSE_BODY, BEH_FRIENDLY, 1,
+                            MHITYOU, &you, "", GOD_YREDELEMNUL, false,
+                            true) <= 0)
+        {
+            if (!quiet)
+                mpr("There is nothing here to animate!");
+            return false;
+        }
+        return true;
+
+    case ABIL_YRED_ANIMATE_DEAD:
+        if (!animate_dead(&you, 1, BEH_FRIENDLY, MHITYOU, &you, "",
+                          GOD_YREDELEMNUL, false))
+        {
+            if (!quiet)
+                mpr("There is nothing nearby to animate!");
+            return false;
+        }
+        return true;
+
     case ABIL_ELYVILON_HEAL_SELF:
         if (you.hp == you.hp_max)
         {
@@ -1656,6 +1677,18 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
 
     case ABIL_SIF_MUNA_DIVINE_EXEGESIS:
         return can_cast_spells(quiet, true);
+
+    case ABIL_FEDHAS_WALL_OF_BRIARS:
+    {
+        vector<coord_def> spaces = find_briar_spaces(true);
+        if (spaces.empty())
+        {
+            if (!quiet)
+                mpr("There isn't enough space to grow briars here.");
+            return false;
+        }
+        return true;
+    }
 
     case ABIL_SPIT_POISON:
     case ABIL_BREATHE_FIRE:
@@ -2938,8 +2971,7 @@ static spret _do_ability(const ability_def& abil, bool fail, dist *target)
 
     case ABIL_FEDHAS_WALL_OF_BRIARS:
         fail_check();
-        if (!fedhas_wall_of_briars())
-            return spret::abort;
+        fedhas_wall_of_briars();
         break;
 
     case ABIL_FEDHAS_GROW_BALLISTOMYCETE:

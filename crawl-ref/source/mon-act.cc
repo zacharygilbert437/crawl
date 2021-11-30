@@ -452,6 +452,7 @@ static bool _mons_can_zap_dig(const monster* mons)
            && mons_itemuse(*mons) >= MONUSE_STARTING_EQUIPMENT
            && mons->inv[MSLOT_WAND] != NON_ITEM
            && env.item[mons->inv[MSLOT_WAND]].is_type(OBJ_WANDS, WAND_DIGGING)
+           && mons->likes_wand(env.item[mons->inv[MSLOT_WAND]])
            && env.item[mons->inv[MSLOT_WAND]].charges > 0;
 }
 
@@ -1039,6 +1040,7 @@ static bool _handle_wand(monster& mons)
         || mons.pacified()
         || mons.confused()
         || mons_itemuse(mons) < MONUSE_STARTING_EQUIPMENT
+        || !mons.likes_wand(*wand)
         || mons.has_ench(ENCH_SUBMERGED)
 
         || x_chance_in_y(3, 4))
@@ -1337,7 +1339,7 @@ static void _pre_monster_move(monster& mons)
     // (monsters are allowed to 'cheat', as with orb of destruction)
     if ((mons.type == MONS_BALL_LIGHTNING || mons.type == MONS_FOXFIRE)
         && mons.summoner == MID_PLAYER
-        && !cell_see_cell(you.pos(), mons.pos(), LOS_SOLID))
+        && !cell_see_cell(you.pos(), mons.pos(), LOS_NO_TRANS))
     {
         if (mons.type == MONS_FOXFIRE)
             check_place_cloud(CLOUD_FLAME, mons.pos(), 2, &mons);
@@ -2542,7 +2544,10 @@ static bool _handle_pickup(monster* mons)
                 // encourages killing Maurice, since there's just one of him.
                 // Usually.
                 || (testbits(si->flags, ISFLAG_SEEN)
-                    && !mons->has_attack_flavour(AF_STEAL))))
+                    && !mons->has_attack_flavour(AF_STEAL)))
+            // ...but it's ok if it dropped the item itself.
+            && !(si->props.exists(DROPPER_MID_KEY)
+                 && si->props[DROPPER_MID_KEY].get_int() == (int)mons->mid))
         {
             // don't pick up any items beneath one that the player's seen,
             // to prevent seemingly-buggy behavior (monsters picking up items
@@ -2554,7 +2559,10 @@ static bool _handle_pickup(monster* mons)
             continue;
 
         if (mons->pickup_item(*si, you.see_cell(mons->pos()), false))
+        {
             count_pickup++;
+            si->props.erase(DROPPER_MID_KEY);
+        }
 
         if (count_pickup > 1 || coinflip())
             break;
