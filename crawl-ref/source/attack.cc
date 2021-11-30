@@ -105,7 +105,7 @@ bool attack::handle_phase_damaged()
         if (blood)
             blood_fineff::schedule(defender, defender->pos(), blood);
         if(verbose){
-            mprf(defender->name() + " is bleeding! Health lost per turn: " + blood);
+            mprf(defender->name(DESC_THE) + " is bleeding! Health lost per turn: " + blood);
         }
     }
 
