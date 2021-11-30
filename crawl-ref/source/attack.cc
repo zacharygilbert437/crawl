@@ -105,7 +105,7 @@ bool attack::handle_phase_damaged()
         if (blood)
             blood_fineff::schedule(defender, defender->pos(), blood);
         if(verbose){
-            mprf(defender->name + " is bleeding! Health lost per turn: " + blood);
+            mprf(defender->name() + " is bleeding! Health lost per turn: " + blood);
         }
     }
 
@@ -1242,7 +1242,7 @@ int attack::calc_damage()
     }
     else
     {
-        int potential_damage, damage;
+        int potential_damage, damage, curr_dmg;
 
         potential_damage = using_weapon() || wpn_skill == SK_THROWING
             ? weapon_damage() : calc_base_unarmed_damage();
@@ -1251,7 +1251,7 @@ int attack::calc_damage()
 
         damage = random2(potential_damage+1);
         if(verbose){
-            mprf("Base damamge: " + damage);
+            mprf("Base damage: " + damage);
         }
 
         int temp_dmg = damage;
